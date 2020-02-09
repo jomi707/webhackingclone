@@ -16,6 +16,36 @@ $( document ). ready(function(){          // DOM생성 후 실행
         var login_id = $('#login_id').val();
         var login_pw = $('#lpgon_pw').val(); // 선택한 input의 값을 가져옴
         var lock = 0;
-        alert(csrf_token);
         
+        if($('#login_id').val() == ''){       //공백체크
+            $('#login_id').focus();
+            lock = 1;
+        }
+
+        else if($('#login_pw').val() == ''){
+            $('#login_pw').focus();
+            lock = 1;
+        }
+        
+        if(lock == 0){
+            $.post( "/login_check", { 
+                csrfmiddlewaretoken : csrf_token,
+                login_id: login_id,
+                login_pw: login_pw 
+                })
+                .done(function( data ) {
+                    if(data.return == 'success'){
+                        window.location.href ="/dashboard";
+                    }
+
+                    else if(data.return == 'fail'){
+                        swal({
+                            type: 'error',
+                            title: 'login fail',
+                            text: 'please check your ID or Password',
+                        })
+                    }
+                });
+        }
+    
     }
